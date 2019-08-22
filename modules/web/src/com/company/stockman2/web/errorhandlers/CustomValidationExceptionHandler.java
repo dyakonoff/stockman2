@@ -10,20 +10,22 @@ import javax.validation.ConstraintViolation;
 import java.util.stream.Collectors;
 
 @Component("stockman2_CustomValidationExceptionHandler")
-public class CustomValidationExceptionHandler  extends AbstractUiExceptionHandler {
+public class CustomValidationExceptionHandler extends AbstractUiExceptionHandler {
     public CustomValidationExceptionHandler() {
         super(EntityValidationException.class.getName());
     }
 
     @Override
     protected void doHandle(String className, String message, @Nullable Throwable throwable, UiContext context) {
-        String errorMsg = message;
+        String errorMsg;
         if (throwable instanceof EntityValidationException) {
             EntityValidationException ex = (EntityValidationException) throwable;
             errorMsg = ex.getConstraintViolations()
                     .stream()
                     .map(ConstraintViolation::getMessage)
                     .collect(Collectors.joining("\n"));
+        } else {
+            errorMsg = message;
         }
 
         context.getNotifications()
