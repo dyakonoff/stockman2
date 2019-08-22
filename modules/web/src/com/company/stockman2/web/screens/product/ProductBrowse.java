@@ -11,6 +11,7 @@ import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.Button;
 import com.haulmont.cuba.gui.components.Component;
 import com.haulmont.cuba.gui.components.Table;
+import com.haulmont.cuba.gui.components.ValidationErrors;
 import com.haulmont.cuba.gui.model.CollectionContainer;
 import com.haulmont.cuba.gui.model.CollectionLoader;
 import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
@@ -42,20 +43,29 @@ public class ProductBrowse extends StandardLookup<Product> {
     @Inject
     private CollectionLoader<Product> productsDl;
 
+    private final static String QTY_PARAM_NAME = "quantity";
+
     public void onReplenishStockClick() {
         dialogs.createInputDialog(this)
                 .withCaption("Replenish Stock")
-                .withParameter(InputParameter.intParameter("quantity")
+                .withParameter(InputParameter.intParameter(QTY_PARAM_NAME)
                     .withRequired(true)
                     .withDefaultValue(0))
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
                     if (product != null && closeEvent.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
-                        Integer qtyChange = closeEvent.getValue("quantity");
+                        Integer qtyChange = closeEvent.getValue(QTY_PARAM_NAME);
                         stockChangingService.changeStock(product.getId(), qtyChange);
                         productsDl.load();
                     }
+                })
+                .withValidator(context -> {
+                    Integer qty = context.getValue(QTY_PARAM_NAME);
+                    if (qty != null && qty <= 0) {
+                        return ValidationErrors.of("Replenish quantity should be positive");
+                    }
+                    return ValidationErrors. none();
                 })
                 .show();
     }
@@ -63,18 +73,25 @@ public class ProductBrowse extends StandardLookup<Product> {
     public void onDeductStockClick() {
         dialogs.createInputDialog(this)
                 .withCaption("Deduct from Stock")
-                .withParameter(InputParameter.intParameter("quantity")
+                .withParameter(InputParameter.intParameter(QTY_PARAM_NAME)
                         .withRequired(true)
                         .withDefaultValue(0))
                 .withActions(DialogActions.OK_CANCEL)
                 .withCloseListener(closeEvent -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
                     if (product != null && closeEvent.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
-                        Integer qtyChange = closeEvent.getValue("quantity");
+                        Integer qtyChange = closeEvent.getValue(QTY_PARAM_NAME);
                         assert qtyChange != null;
                         stockChangingService.changeStock(product.getId(), -qtyChange);
                         productsDl.load();
                     }
+                })
+                .withValidator(context -> {
+                    Integer qty = context.getValue(QTY_PARAM_NAME);
+                    if (qty != null && qty <= 0) {
+                        return ValidationErrors.of("Deduct quantity should be positive");
+                    }
+                    return ValidationErrors. none();
                 })
                 .show();
     }

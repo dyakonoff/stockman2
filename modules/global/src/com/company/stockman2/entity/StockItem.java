@@ -10,6 +10,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PositiveOrZero;
 
 @Table(name = "STOCKMAN2_STOCK_ITEM")
 @Entity(name = "stockman2_StockItem")
@@ -18,6 +19,7 @@ public class StockItem extends StandardEntity {
 
     @NotNull
     @Column(name = "QUANTITY", nullable = false)
+    @PositiveOrZero(message = "Stock item quantity should be 0 or greater")
     protected Integer quantity;
 
     @NotNull
