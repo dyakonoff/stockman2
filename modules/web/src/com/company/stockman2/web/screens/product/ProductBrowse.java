@@ -1,5 +1,6 @@
 package com.company.stockman2.web.screens.product;
 
+import com.company.stockman2.entity.Product;
 import com.company.stockman2.service.StockChangingService;
 import com.haulmont.cuba.gui.Dialogs;
 import com.haulmont.cuba.gui.UiComponents;
@@ -9,12 +10,14 @@ import com.haulmont.cuba.gui.app.core.inputdialog.InputParameter;
 import com.haulmont.cuba.gui.components.Action;
 import com.haulmont.cuba.gui.components.Button;
 import com.haulmont.cuba.gui.components.Component;
-import com.haulmont.cuba.gui.components.GroupTable;
 import com.haulmont.cuba.gui.components.Table;
 import com.haulmont.cuba.gui.model.CollectionContainer;
 import com.haulmont.cuba.gui.model.CollectionLoader;
-import com.haulmont.cuba.gui.screen.*;
-import com.company.stockman2.entity.Product;
+import com.haulmont.cuba.gui.screen.LoadDataBeforeShow;
+import com.haulmont.cuba.gui.screen.LookupComponent;
+import com.haulmont.cuba.gui.screen.StandardLookup;
+import com.haulmont.cuba.gui.screen.UiController;
+import com.haulmont.cuba.gui.screen.UiDescriptor;
 
 import javax.inject.Inject;
 
@@ -42,13 +45,15 @@ public class ProductBrowse extends StandardLookup<Product> {
     public void onReplenishStockClick() {
         dialogs.createInputDialog(this)
                 .withCaption("Replenish Stock")
-                .withParameters(InputParameter.intParameter("quantity")
+                .withParameter(InputParameter.intParameter("quantity")
                     .withRequired(true)
                     .withDefaultValue(0))
-                .withActions(DialogActions.OK_CANCEL, result -> {
+
+                .withActions(DialogActions.OK_CANCEL)
+                .withCloseListener(event -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
-                    if (product != null && result.getCloseActionType().equals(InputDialog.InputDialogResult.ActionType.OK)) {
-                        Integer quantity = result.getValue("quantity");
+                    if (product != null && event.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
+                        Integer quantity = event.getValue("quantity");
                         assert quantity != null;
                         stockChangingService.changeStock(product.getId(), quantity);
                         productsDl.load();
@@ -60,13 +65,14 @@ public class ProductBrowse extends StandardLookup<Product> {
     public void onDeductStockClick() {
         dialogs.createInputDialog(this)
                 .withCaption("Deduct from Stock")
-                .withParameters(InputParameter.intParameter("quantity")
+                .withParameter(InputParameter.intParameter("quantity")
                         .withRequired(true)
                         .withDefaultValue(0))
-                .withActions(DialogActions.OK_CANCEL, result -> {
+                .withActions(DialogActions.OK_CANCEL)
+                .withCloseListener(event -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
-                    if (product != null && result.getCloseActionType().equals(InputDialog.InputDialogResult.ActionType.OK)) {
-                        Integer quantity = result.getValue("quantity");
+                    if (product != null && event.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
+                        Integer quantity = event.getValue("quantity");
                         assert quantity != null;
                         stockChangingService.changeStock(product.getId(), -quantity);
                         productsDl.load();
@@ -90,6 +96,7 @@ public class ProductBrowse extends StandardLookup<Product> {
         Button btnDeduct = uiComponents.create(Button.class);
         btnDeduct.setAction(deductStock);
         btnDeduct.setStyleName("icon-only");
+        btnDeduct.setEnabled(entity.getStockItem().getQuantity() > 0);
         return btnDeduct;
     }
 }

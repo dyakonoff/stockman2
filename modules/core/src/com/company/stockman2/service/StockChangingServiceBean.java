@@ -3,9 +3,7 @@ package com.company.stockman2.service;
 import com.company.stockman2.entity.Product;
 import com.company.stockman2.entity.StockItem;
 import com.haulmont.cuba.core.global.DataManager;
-import com.haulmont.cuba.core.global.View;
 import com.haulmont.cuba.core.global.validation.CustomValidationException;
-import com.haulmont.cuba.core.global.validation.EntityValidationException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
