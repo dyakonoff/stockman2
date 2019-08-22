@@ -48,14 +48,12 @@ public class ProductBrowse extends StandardLookup<Product> {
                 .withParameter(InputParameter.intParameter("quantity")
                     .withRequired(true)
                     .withDefaultValue(0))
-
                 .withActions(DialogActions.OK_CANCEL)
-                .withCloseListener(event -> {
+                .withCloseListener(closeEvent -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
-                    if (product != null && event.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
-                        Integer quantity = event.getValue("quantity");
-                        assert quantity != null;
-                        stockChangingService.changeStock(product.getId(), quantity);
+                    if (product != null && closeEvent.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
+                        Integer qtyChange = closeEvent.getValue("quantity");
+                        stockChangingService.changeStock(product.getId(), qtyChange);
                         productsDl.load();
                     }
                 })
@@ -69,12 +67,12 @@ public class ProductBrowse extends StandardLookup<Product> {
                         .withRequired(true)
                         .withDefaultValue(0))
                 .withActions(DialogActions.OK_CANCEL)
-                .withCloseListener(event -> {
+                .withCloseListener(closeEvent -> {
                     Product product = productsDc.getItemOrNull(); // get selected item
-                    if (product != null && event.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
-                        Integer quantity = event.getValue("quantity");
-                        assert quantity != null;
-                        stockChangingService.changeStock(product.getId(), -quantity);
+                    if (product != null && closeEvent.getCloseAction() == InputDialog.INPUT_DIALOG_OK_ACTION) {
+                        Integer qtyChange = closeEvent.getValue("quantity");
+                        assert qtyChange != null;
+                        stockChangingService.changeStock(product.getId(), -qtyChange);
                         productsDl.load();
                     }
                 })

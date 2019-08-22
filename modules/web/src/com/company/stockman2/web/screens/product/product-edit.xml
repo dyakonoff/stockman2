@@ -6,7 +6,7 @@
     <data>
         <instance id="productDc"
                   class="com.company.stockman2.entity.Product"
-                  view="_local">
+                  view="product-with-stock">
             <loader/>
         </instance>
     </data>
