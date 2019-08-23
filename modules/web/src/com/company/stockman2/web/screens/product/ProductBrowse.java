@@ -65,7 +65,7 @@ public class ProductBrowse extends StandardLookup<Product> {
                     if (qty != null && qty <= 0) {
                         return ValidationErrors.of("Replenish quantity should be positive");
                     }
-                    return ValidationErrors. none();
+                    return ValidationErrors.none();
                 })
                 .show();
     }
@@ -91,7 +91,7 @@ public class ProductBrowse extends StandardLookup<Product> {
                     if (qty != null && qty <= 0) {
                         return ValidationErrors.of("Deduct quantity should be positive");
                     }
-                    return ValidationErrors. none();
+                    return ValidationErrors.none();
                 })
                 .show();
     }
