@@ -4,6 +4,7 @@ import com.haulmont.chile.core.annotations.Composition;
 import com.haulmont.chile.core.annotations.NamePattern;
 import com.haulmont.cuba.core.entity.StandardEntity;
 import com.haulmont.cuba.core.entity.annotation.OnDelete;
+import com.haulmont.cuba.core.entity.annotation.OnDeleteInverse;
 import com.haulmont.cuba.core.global.AppBeans;
 import com.haulmont.cuba.core.global.DataManager;
 import com.haulmont.cuba.core.global.DeletePolicy;
@@ -38,6 +39,7 @@ public class Product extends StandardEntity {
     @Column(name = "PRICE", nullable = false)
     protected BigDecimal price;
 
+    @OnDeleteInverse(DeletePolicy.DENY)
     @Composition
     @OnDelete(DeletePolicy.CASCADE)
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "product")
